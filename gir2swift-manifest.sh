@@ -1,22 +1,22 @@
 #!/bin/bash
 
 GIR_NAME="cairo-1.0"
+GIR_PKG="cairo"
 CAPITALIZED_NAME="Cairo-1.0"
 
-function generate_arg-path_arg-g2s-exec_arg-gir-pre_arg-gir-path {
+function generate_arg-path_arg-g2s-exec_arg-gir-file_arg-gir-pre-files {
     local PACKAGE_PATH=$1
     local G2S_EXEC=$2
-    local GIR_PRE=$3
-    local GIR_PATH=$4
+    local GIR_PRE_FILES=$3
+    local GIR_FILE=$4
 
     local CALLER=$PWD
 
     cd $PACKAGE_PATH
-
-    local NAME=$(package_name)
-    local GIR_PRE_ARGS=`for FILE in ${GIR_PRE}; do echo -n "-p ${GIR_PATH}/${FILE}.gir "; done`
     
-    bash -c "${G2S_EXEC} ${GIR_PRE_ARGS} ${GIR_PATH}/${GIR_NAME}.gir | sed -f ${GIR_NAME}.sed > Sources/${NAME}/${CAPITALIZED_NAME}.swift"
+    local NAME=$(package_name)
+    local GIR_PRE_ARGS=`for FILE in ${GIR_PRE_FILES}; do echo -n "-p ${FILE} "; done`
+    bash -c "${G2S_EXEC} ${GIR_PRE_ARGS} ${GIR_FILE} | sed -f ${GIR_NAME}.sed > Sources/${NAME}/${CAPITALIZED_NAME}.swift"
     echo  > Sources/${NAME}/Swift${NAME}.swift "import CGLib"
     echo  > Sources/${NAME}/Swift${NAME}.swift "import CCairo"
     echo >> Sources/${NAME}/Swift${NAME}.swift "import GLib"
@@ -39,5 +39,6 @@ function generate_arg-path_arg-g2s-exec_arg-gir-pre_arg-gir-path {
 
 case $1 in
 gir-name) echo $GIR_NAME;;
-generate) echo $(generate_arg-path_arg-g2s-exec_arg-gir-pre_arg-gir-path "$2" "$3" "$4" "$5");;
+gir-pkg) echo $GIR_PKG;;
+generate) echo $(generate_arg-path_arg-g2s-exec_arg-gir-file_arg-gir-pre-files "$2" "$3" "$4" "$5");;
 esac
